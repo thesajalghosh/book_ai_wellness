@@ -1,11 +1,27 @@
 import logo from './logo.svg';
 import './App.css';
+import Header from './component/Header';
+import HomePage from './pages/HomePage';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import BookPage from './pages/BookPage';
 
 function App() {
   return (
-    <div className="bg-orange-200 h-screen flex items-center  justify-center font-bold text-3xl">
-         Hello from AVATAR BOOK!!!!
-    </div>
+    <>
+      <BrowserRouter>
+        <Header />
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/book-page" element={<BookPage />} />
+
+
+        </Routes>
+
+
+
+      </BrowserRouter>
+
+    </>
   );
 }
 
