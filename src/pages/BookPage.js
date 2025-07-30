@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import PersonImage from "../Images/avataor.png";
 import BookImage from "../Images/book_m.png";
 import BookShow from "../component/BookShow";
+import Avater from "../component/avater";
 
 
 const chapters = Array.from({ length: 10 }, (_, i) => `Chapter ${i + 1}`);
@@ -16,21 +17,11 @@ const BookPage = () => {
         <h2 className="text-[1.1rem] w-full font-bold mb-4">The Secrets of Nitric Oxide</h2>
 
         <div className="bg-gradient-to-r from-[#F6F6F6] to-[#B8BBC2]
-  shadow-xl rounded-[40px] p-6 flex flex-col md:flex-row gap-[15px] w-full h-[90vh]">
+  shadow-xl rounded-[40px] p-6 flex flex-col justigy-center items-center md:flex-row gap-[15px] w-full h-[90vh]">
 
-          {/* Left side - 30% */}
           <div className="relative flex flex-col items-center justify-center md:basis-[30%] w-full">
-            <img
-              src={PersonImage}
-              alt="Doctor"
-              className="w-64 h-auto object-cover rounded-xl"
-            />
-            <button className="absolute bottom-4 bg-green-600 text-white px-4 py-2 rounded-full hover:bg-green-700 transition">
-              Chat Now
-            </button>
+            <Avater />
           </div>
-
-          {/* Right side - 70% */}
           <div className="flex flex-col gap-4 md:basis-[70%] w-full">
             <div className="flex justify-center">
               <BookShow />
