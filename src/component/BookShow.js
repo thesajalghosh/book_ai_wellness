@@ -17,10 +17,11 @@ const Page = React.forwardRef(({ children }, ref) => {
     );
 });
 
-const BookShow = () => {
+const BookShow = ({ call_from }) => {
     const book = useRef();
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [page, setPage] = useState(0)
+    const [isSubscribe, setISSubscribe] = useState(false)
 
     const goNext = () => {
         book.current?.pageFlip()?.flipNext();
@@ -28,19 +29,29 @@ const BookShow = () => {
 
     const goPrev = () => {
         book.current?.pageFlip()?.flipPrev();
- 
+
     };
 
     useEffect(() => {
         if (page > 2) {
-            setIsModalOpen(true)
+            if (call_from === "notLogin") {
+                setIsModalOpen(true);
+            } else if (call_from === "login" && isSubscribe === false) {
+                setIsModalOpen(true);
+            }
         }
-
-    }, [page])
+    }, [page, call_from, isSubscribe]);
 
     const handleFlip = (e) => {
-        console.log("e.data")
-        setPage(e.data); // e.data is the current page index
+        const currentPage = e.data;
+
+        // If user tries to manually drag beyond page 2
+        if ((call_from === "notLogin" || !isSubscribe) && currentPage > 2) {
+            book.current?.pageFlip()?.flip(2); // Force reset to page 2
+            setIsModalOpen(true);
+        } else {
+            setPage(currentPage);
+        }
     };
 
     console.log("page", page)

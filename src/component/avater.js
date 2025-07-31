@@ -11,7 +11,7 @@ import StreamingAvatar, {
     VoiceEmotion,
 } from "@heygen/streaming-avatar";
 
-const Avater = () => {
+const Avater = ({ call_from }) => {
     const [accessToken, setAccessToken] = useState('')
     const [initialModal, setInitialModal] = useState(true)
     const [accessTokenLoading, setAccessTokenLoading] = useState(false)
@@ -51,8 +51,8 @@ const Avater = () => {
     const handleAccessToken = async () => {
         setAccessTokenLoading(true)
         try {
-            //   const { data } = await axios.get("https://api.aiwellness.ai/api/v1/get_access_token/ABY2VmODFhZmVjYWRkNGMwZDliOWEyMWVmMDE4YWVmM2MtMTc0Mzg3MTA0NQ==")
-            const { data } = await axios.get("https://api.aiwellness.ai/api/v1/get_access_token/ABOWQ4YzkxOTNhNmFmNGU1Yzk3MWJjMGI4NDE4MDQ5ZDUtMTc0NzA0NTEwNg==")
+              const { data } = await axios.get("https://api.aiwellness.ai/api/v1/get_access_token/ABY2VmODFhZmVjYWRkNGMwZDliOWEyMWVmMDE4YWVmM2MtMTc0Mzg3MTA0NQ==")
+            // const { data } = await axios.get("https://api.aiwellness.ai/api/v1/get_access_token/ABOWQ4YzkxOTNhNmFmNGU1Yzk3MWJjMGI4NDE4MDQ5ZDUtMTc0NzA0NTEwNg==")
             if (data?.success) {
                 setAccessToken(data?.data?.token)
             }
@@ -343,45 +343,6 @@ const Avater = () => {
         }
     }, [timeElapsedKeypress])
 
-
-    function processTextWithUrls(text) {
-        // Match either:
-        // 1. Markdown-style links [text](url)
-        // 2. Plain URLs (http/https or domain with TLD)
-        const urlRegex = /(\[(.*?)\]\((.*?)\))|(https?:\/\/[^\s]*|(?:www\.)?[a-zA-Z0-9-]+\s*\.[a-zA-Z]{2,}(?:\.[a-zA-Z]{2})?[^\s]*)/gi;
-
-        return text.replace(urlRegex, function (match, ...groups) {
-            // Handle markdown-style links [text](url)
-            if (groups[0]) { // Markdown link detected
-                const displayText = groups[1] || '';
-                let url = groups[2] || '';
-
-                // Clean URL and ensure proper protocol
-                url = url.replace(/\s+/g, '');
-                if (!url.startsWith('http')) {
-                    url = 'https://' + url;
-                }
-
-                return `<a href="${url}" target="_blank" rel="noopener noreferrer" class="text-blue-500 underline">${url}</a>`;
-            }
-
-            // Handle plain URLs
-            let cleanedUrl = match.replace(/\s+/g, '');
-
-            // Add protocol if missing
-            if (!cleanedUrl.startsWith('http')) {
-                cleanedUrl = 'https://' + cleanedUrl;
-            }
-
-            // Fix any protocol duplication
-            cleanedUrl = cleanedUrl
-                .replace(/^http(s?):\/\/http(s?):\/\//, 'http$1://')
-                .replace(/^https:\/\/https:\/\//, 'https://');
-
-            return `<a href="${cleanedUrl}" target="_blank" rel="noopener noreferrer" class="text-blue-500 underline">${cleanedUrl}</a>`;
-        });
-    }
-
     useEffect(() => {
         if (messagesEndRef.current) {
             messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
@@ -425,7 +386,7 @@ const Avater = () => {
 
             {
                 isLoadingSession && (
-                    <div className="absolute top-0 left-0 w-full h-[100vh] bg-black z-50 flex items-center justify-center">
+                    <div className="absolute top-0 left-0 w-full h-[75vh] bg-black z-50 flex items-center justify-center rounded-[20px]">
                         <div className="w-8 h-8 border-4 border-emerald-600 border-t-transparent rounded-full animate-spin"></div>
                         <span className="text-sm text-emerald-600 ml-2">Loading...</span>
                     </div>
@@ -434,7 +395,7 @@ const Avater = () => {
             }
 
             <div className="flex flex-col justify-between gap-2 h-[75vh] ">
-                <div className="bg-red-500 w-[30vw] h-[62vh] rounded-[20px]">
+                <div className="w-[30vw] h-[62vh] rounded-[20px]">
                     <video
                         ref={mediaStream}
                         autoPlay

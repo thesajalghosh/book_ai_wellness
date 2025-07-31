@@ -24,7 +24,7 @@ const BookPage = () => {
           </div>
           <div className="flex flex-col gap-4 md:basis-[70%] w-full">
             <div className="flex justify-center">
-              <BookShow />
+              <BookShow call_from={"login"}/>
             </div>
           </div>
         </div>
