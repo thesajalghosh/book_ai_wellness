@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 
 const HomePage = () => {
     const navigate = useNavigate()
+    const token = localStorage.getItem("authToken")
     return (
         <div
             className="relative bg-cover bg-center min-h-screen"

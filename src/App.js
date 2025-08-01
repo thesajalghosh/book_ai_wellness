@@ -14,12 +14,12 @@ function App() {
   useEffect(() => {
     // Example check using localStorage
     const token = localStorage.getItem('authToken');
-    if(token){
+    if (token) {
       setIsLoggedIn(true);
 
     }
   }, []);
-console.log("isLoggedIn", isLoggedIn)
+  console.log("isLoggedIn", isLoggedIn)
   return (
     <BrowserRouter>
       <Header />
@@ -27,13 +27,7 @@ console.log("isLoggedIn", isLoggedIn)
         <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<Login setIsLoggedIn={setIsLoggedIn} />} />
         <Route path="/register" element={<Register />} />
-        
-        {/* Protected Route Logic */}
-        <Route
-          path="/book-page"
-          element={isLoggedIn ? <BookPage /> : <Navigate to="/nl-book-page" />}
-        />
-        <Route path="/nl-book-page" element={<BookPageNL />} />
+        <Route path="/book-page" element={<BookPage />} />
       </Routes>
     </BrowserRouter>
   );
