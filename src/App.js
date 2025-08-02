@@ -22,7 +22,7 @@ function App() {
   console.log("isLoggedIn", isLoggedIn)
   return (
     <BrowserRouter>
-      <Header />
+      {/* <Header /> */}
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<Login setIsLoggedIn={setIsLoggedIn} />} />

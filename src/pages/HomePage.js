@@ -8,13 +8,13 @@ const HomePage = () => {
     const token = localStorage.getItem("authToken")
     return (
         <div
-            className="relative bg-cover bg-center min-h-screen"
+            className="relative bg-cover bg-center min-h-screen font-roboto"
             style={{ backgroundImage: `url(${Main_bg})` }}
         >
             {/* Dark overlay */}
             <div className="absolute inset-0 bg-black bg-opacity-50 z-0" />
 
-            <div className="relative z-10 flex flex-col items-center justify-center min-h-screen px-4 text-white text-center">
+            <div className="relative z-10 flex flex-col items-center justify-center min-h-screen px-4 text-white text-center pt-[10px]">
                 <h2 className="text-2xl md:text-4xl font-semibold mb-8">
                     Dr. Nathan Bryan’s Books
                 </h2>
@@ -23,7 +23,7 @@ const HomePage = () => {
                 <BookRotation />
 
                 {/* Subtitle & button */}
-                <div className="mt-10">
+                <div className="mt-4">
                     <p className="text-lg md:text-xl font-semibold mb-2">
                         The Secrets of Nitric Oxide
                     </p>

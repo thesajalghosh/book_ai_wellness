@@ -5,6 +5,9 @@ module.exports = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        roboto: ['Roboto', 'sans-serif'],
+      },
       keyframes: {
         fanLeft1: {
           '0%': { transform: 'translateY(-50%) rotate(0deg)' },

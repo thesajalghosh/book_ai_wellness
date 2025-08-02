@@ -11,12 +11,15 @@ const BookPage = () => {
   const [selectedPlan, setSelectedPlan] = useState("")
   const token = localStorage.getItem("authToken")
 
+  const chapters = Array.from({ length: 10 }, (_, i) => `Chapter ${i + 1}`);
+  const [selected, setSelected] = useState("Chapter 1");
+
   useEffect(() => {
     const timer = setInterval(() => {
       setTimeLeft(prev => {
         const updated = prev > 0 ? prev - 1 : 0;
         if (updated === 0) {
-          setIsModalOpen(true);
+          // setIsModalOpen(true);
         }
         return updated;
       });
@@ -38,9 +41,9 @@ const BookPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-white flex flex-col items-center p-6 font-sans relative">
+    <div className="min-h-screen bg-white flex flex-col items-center p-6 font-roboto relative">
       {/* Countdown Timer */}
-      <div className="absolute top-4 right-0 bg-green-700 text-white px-4 py-2 rounded-tl-[20px] rounded-bl-[20px] shadow-lg text-sm md:text-base z-50">
+      <div className="absolute top-[70px] right-0 bg-green-700 text-white px-4 py-2 rounded-tl-[20px] rounded-bl-[20px] shadow-lg text-sm md:text-base z-50">
         Free trial ends in {formatTime(timeLeft)} sec
       </div>
 
@@ -53,29 +56,43 @@ const BookPage = () => {
         )}
 
         {/* Main Content */}
-        <h2 className="text-[1.1rem] w-full font-bold mb-4">The Secrets of Nitric Oxide</h2>
-        <div className={`transition duration-300 ${isModalOpen ? "blur-sm pointer-events-none" : ""}`}>
+        <h2 className="text-[1.1rem] w-full font-bold mb-4 font-roboto">The Secrets of Nitric Oxide</h2>
+        <div className={`transition duration-300  ${isModalOpen ? "blur-sm pointer-events-none" : ""}`}>
 
-          <div className="bg-gradient-to-r from-[#F6F6F6] to-[#B8BBC2] shadow-xl rounded-[40px] p-6 flex flex-col justify-center items-center md:flex-row gap-[15px] w-full h-[90vh]">
-            <div className="relative flex flex-col items-center justify-center md:basis-[30%] w-full">
-              <Avater timeLeft={timeLeft}/>
+          <div className="bg-[linear-gradient(to_right,_#F6F6F6_60%,_#B8BBC2_100%)] rounded-[40px] flex flex-col
+           justify-center items-center md:flex-row gap-[25px] w-full h-[96vh]  px-[30px]">
+
+            <div className="relative flex flex-col items-center justify-center md:basis-[40%] w-full h-[100%]">
+              <Avater timeLeft={timeLeft} />
             </div>
-            <div className="flex flex-col gap-4 md:basis-[70%] w-full">
-              <div className="flex justify-center">
-                <BookShow call_from={"notLogin"} />
+            <div className="md:basis-[60%] w-full h-full">
+              <div className="w-full mx-auto p-4">
+                <p className="mb-2 text-gray-700 font-medium">
+                  Click any chapter to explain about the chapter
+                </p>
+
+                <div className="flex flex-wrap gap-2">
+                  {chapters.map((chapter) => (
+                    <button
+                      key={chapter}
+                      onClick={() => setSelected(chapter)}
+                      className={`px-3 py-[2px] rounded-full font-medium border transition-all
+              ${selected === chapter
+                          ? "bg-emerald-700 text-white border-emerald-700"
+                          : "text-emerald-700 border-emerald-700 hover:bg-emerald-50"
+                        }`}
+                    >
+                      {chapter}
+                    </button>
+                  ))}
+                </div>
               </div>
+              <BookShow call_from={"notLogin"} />
+
             </div>
           </div>
 
           {/* Bottom Buttons */}
-          <div className="flex gap-4 mt-6">
-            <button className="flex items-center gap-2 px-6 py-3 bg-green-700 text-white rounded-full hover:bg-green-800 transition">
-              <span>▶</span> Play My Journey
-            </button>
-            <button className="flex items-center gap-2 px-6 py-3 bg-green-700 text-white rounded-full hover:bg-green-800 transition">
-              <span>▶</span> Play promo video
-            </button>
-          </div>
         </div>
 
         {/* Modal Positioned Inside Container */}
