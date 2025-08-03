@@ -48,7 +48,7 @@ const BookShow = ({ call_from }) => {
     return (
         <>
             {/* Audio Tag */}
-            <audio ref={audioRef} src="/sound/pagesound.mp3" preload="auto" />
+            <audio ref={audioRef} src="https://res.cloudinary.com/dgkckcwxs/video/upload/v1754245905/pagesound_ewxha1.mp3" preload="auto" />
 
             <div className="relative w-full h-[75vh] flex justify-center bg-white rounded-xl border border-[#E2E2E2] overflow-hidden">
 
