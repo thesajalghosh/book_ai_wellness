@@ -43,28 +43,32 @@ const BookShow = ({ call_from }) => {
 
     const handleFlip = () => {
         playSound();
-    }
+    };
 
     return (
         <>
             {/* Audio Tag */}
             <audio ref={audioRef} src="/sound/pagesound.mp3" preload="auto" />
 
-            <div className="w-full h-[75vh] flex justify-center bg-white rounded-xl border border-[#E2E2E2] border-[1px] overflow-hidden">
+            <div className="relative w-full h-[75vh] flex justify-center bg-white rounded-xl border border-[#E2E2E2] overflow-hidden">
 
-                <button onClick={goPrev} className="p-2">
-                    <IoIosArrowBack size={30} />
+                {/* Previous Button */}
+                <button
+                    onClick={goPrev}
+                    className="group absolute left-4 top-1/2 -translate-y-1/2 bg-white border border-gray-300 rounded-full p-3 shadow-md hover:bg-emerald-600 hover:text-white transition duration-200 z-10"
+                >
+                    <IoIosArrowBack
+                        size={24}
+                        className="group-hover:scale-110 transition-transform duration-200"
+                    />
                 </button>
 
+                {/* Flipbook */}
                 <HTMLFlipBook
                     width={400}
                     height={650}
                     onFlip={handleFlip}
                     size="stretch"
-                    // minWidth={300}
-                    // maxWidth={1000}
-                    // minHeight={500}
-                    // maxHeight={700}
                     maxShadowOpacity={0.5}
                     showCover={true}
                     mobileScrollSupport={true}
@@ -82,8 +86,15 @@ const BookShow = ({ call_from }) => {
                     ))}
                 </HTMLFlipBook>
 
-                <button onClick={goNext} className="p-2">
-                    <IoIosArrowForward size={30} />
+                {/* Next Button */}
+                <button
+                    onClick={goNext}
+                    className="group absolute right-4 top-1/2 -translate-y-1/2 bg-white border border-gray-300 rounded-full p-3 shadow-md hover:bg-emerald-600 hover:text-white transition duration-200 z-10"
+                >
+                    <IoIosArrowForward
+                        size={24}
+                        className="group-hover:scale-110 transition-transform duration-200"
+                    />
                 </button>
             </div>
         </>

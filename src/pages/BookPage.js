@@ -3,29 +3,43 @@ import BookShow from "../component/BookShow";
 import Avater from "../component/avater";
 import Star from "../Images/star.svg";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const BookPage = () => {
-  const navigate = useNavigate()
-  const [timeLeft, setTimeLeft] = useState(90);
+  const navigate = useNavigate();
+  const [timeLeft, setTimeLeft] = useState(20);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedPlan, setSelectedPlan] = useState("")
-  const token = localStorage.getItem("authToken")
+  const [selectedPlan, setSelectedPlan] = useState("");
+  const token = localStorage.getItem("access-token");
+  const [loading, setLoading] = useState(false);
+  const [userDetails, setUserDetails] = useState({});
 
   const chapters = Array.from({ length: 10 }, (_, i) => `Chapter ${i + 1}`);
   const [selected, setSelected] = useState("Chapter 1");
 
+  // Open modal immediately for non-logged-in users
+  // useEffect(() => {
+  //   if (!token) {
+  //     setIsModalOpen(true);
+  //   }
+  // }, []);
+
   useEffect(() => {
     const timer = setInterval(() => {
-      setTimeLeft(prev => {
+      setTimeLeft((prev) => {
         const updated = prev > 0 ? prev - 1 : 0;
         if (updated === 0) {
-          // setIsModalOpen(true);
+          const notLoggedIn = !token;
+          const notSubscribed = !userDetails?.is_subscription;
+          if (notLoggedIn || notSubscribed) {
+            setIsModalOpen(true);
+          }
         }
         return updated;
       });
     }, 1000);
     return () => clearInterval(timer);
-  }, []);
+  }, [token, userDetails]);
 
   const formatTime = (seconds) => {
     const mins = String(Math.floor(seconds / 60)).padStart(2, "0");
@@ -33,35 +47,96 @@ const BookPage = () => {
     return `${mins}:${secs}`;
   };
 
-  const handleSelectedPlan = (plan_type) => {
-    if (!token) {
-      navigate("/login")
+  const handleplan = async (plan_type) => {
+    setSelectedPlan(plan_type);
+    setLoading(true);
+    const amount = plan_type === "monthly" ? 59 : 599;
+    const payload = {
+      plan: plan_type,
+      amount: amount,
+    };
+    try {
+      const { data: response_data } = await axios.post(
+        `${process.env.REACT_APP_BACKEND_API}/avatar_book/user/transaction`,
+        payload
+      );
+      if (response_data.success) {
+        navigate(`/invoice-page/${response_data?.data?._id}`);
+      }
+    } catch (error) {
+      console.log("error", error);
+    } finally {
+      setLoading(false);
     }
-    setSelectedPlan(plan_type)
-  }
+  };
+
+  const getUserDetails = async () => {
+    setLoading(true);
+    try {
+      const { data: response_data } = await axios.get(
+        `${process.env.REACT_APP_BACKEND_API}/avatar_book/user/${token}`
+      );
+
+      // console.log("response_data", response_data);
+      if (response_data.success) {
+        setUserDetails(response_data.data);
+
+        if (!response_data.data.is_subscription) {
+          setIsModalOpen(true);
+        }
+      }
+    } catch (error) {
+      console.log("error", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (token) {
+      getUserDetails();
+    }
+  }, [token]);
 
   return (
     <div className="min-h-screen bg-white flex flex-col items-center p-6 font-roboto relative">
-      {/* Countdown Timer */}
-      <div className="absolute top-[70px] right-0 bg-green-700 text-white px-4 py-2 rounded-tl-[20px] rounded-bl-[20px] shadow-lg text-sm md:text-base z-50">
-        Free trial ends in {formatTime(timeLeft)} sec
-      </div>
+      {(!token || !userDetails?.is_subscription) && (
+        <div className="absolute top-[70px] right-0 bg-[#F1FAEE] border border-[#38A169] text-[#22543D] px-5 py-3 rounded-l-2xl shadow-md flex items-center gap-3 z-50">
+          <svg
+            className="w-5 h-5 text-[#38A169]"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={2}
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M12 6v6l4 2m8-2a10 10 0 11-20 0 10 10 0 0120 0z"
+            />
+          </svg>
+          <span className="text-sm md:text-base font-medium">
+            Free trial ends in <span className="font-semibold">{formatTime(timeLeft)}</span>
+          </span>
+        </div>
+      )}
 
-      {/* Container with relative for local overlay */}
+
+
       <div className="w-[90%] relative">
-
-        {/* Black Overlay only inside container */}
         {isModalOpen && (
           <div className="absolute inset-0 bg-black bg-opacity-0 z-10 rounded-[40px]"></div>
         )}
 
-        {/* Main Content */}
-        <h2 className="text-[1.1rem] w-full font-bold mb-4 font-roboto">The Secrets of Nitric Oxide</h2>
-        <div className={`transition duration-300  ${isModalOpen ? "blur-sm pointer-events-none" : ""}`}>
+        <h2 className="text-[1.1rem] w-full font-bold mb-4 font-roboto">
+          The Secrets of Nitric Oxide
+        </h2>
 
-          <div className="bg-[linear-gradient(to_right,_#F6F6F6_60%,_#B8BBC2_100%)] rounded-[40px] flex flex-col
-           justify-center items-center md:flex-row gap-[25px] w-full h-[96vh]  px-[30px]">
-
+        <div
+          className={`transition duration-300 ${isModalOpen ? "blur-sm pointer-events-none" : ""
+            }`}
+        >
+          <div className="bg-[linear-gradient(to_right,_#F6F6F6_60%,_#B8BBC2_100%)] rounded-[40px] flex flex-col justify-center items-center md:flex-row gap-[25px] w-full h-[96vh] px-[30px]">
             <div className="relative flex flex-col items-center justify-center md:basis-[40%] w-full h-[100%]">
               <Avater timeLeft={timeLeft} />
             </div>
@@ -76,10 +151,9 @@ const BookPage = () => {
                     <button
                       key={chapter}
                       onClick={() => setSelected(chapter)}
-                      className={`px-3 py-[2px] rounded-full font-medium border transition-all
-              ${selected === chapter
-                          ? "bg-emerald-700 text-white border-emerald-700"
-                          : "text-emerald-700 border-emerald-700 hover:bg-emerald-50"
+                      className={`px-3 py-[2px] rounded-full font-medium border transition-all ${selected === chapter
+                        ? "bg-emerald-700 text-white border-emerald-700"
+                        : "text-emerald-700 border-emerald-700 hover:bg-emerald-50"
                         }`}
                     >
                       {chapter}
@@ -88,59 +162,76 @@ const BookPage = () => {
                 </div>
               </div>
               <BookShow call_from={"notLogin"} />
-
             </div>
           </div>
-
-          {/* Bottom Buttons */}
         </div>
 
-        {/* Modal Positioned Inside Container */}
         {isModalOpen && (
           <div className="absolute top-1/2 left-1/2 z-20 transform -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-[400px] bg-white rounded-3xl shadow-2xl p-6 text-center">
-            {/* Close Button */}
-            {/* <button
-                            onClick={() => setIsModalOpen(false)}
-                            className="absolute top-4 right-4 text-gray-500 hover:text-black text-xl font-bold"
-                        >
-                            ×
-                        </button> */}
-
-            <div className='w-full'>
-              <div className='flex justify-between items-center'>
+            <div className="w-full">
+              <div className="flex justify-between items-center">
                 <h2 className="text-[1.5rem] font-bold mb-1">Get Membership</h2>
                 <div className="flex justify-center mb-2">
                   <img src={Star} alt="star" className="w-[60px] h-[60px]" />
                 </div>
               </div>
               <p className="text-gray-500 text-[0.8rem] mb-4 text-left">
-                Subscribe to Premium to get access to Dr Nathan Bryan <br /> AI Interactive Magazine
+                Subscribe to Premium to get access to Dr Nathan Bryan <br /> AI
+                Interactive Magazine
               </p>
             </div>
 
-            <div onClick={() => handleSelectedPlan("month")} className=" flex justify-between items-center border rounded-2xl py-2 px-2 bg-[#EEEEEE] mb-3 hover:shadow-md transition cursor-pointer">
+            {/* Monthly Plan */}
+            <div
+              onClick={() => handleplan("monthly")}
+              className={`flex justify-between items-center border rounded-2xl py-2 px-2 bg-[#EEEEEE] mb-3 hover:shadow-md transition cursor-pointer ${selectedPlan === "monthly" && loading
+                ? "opacity-70 pointer-events-none"
+                : ""
+                }`}
+            >
               <div>
                 <h3 className="text-lg font-semibold">1 Month</h3>
                 <p className="text-xs text-gray-500 mb-1">3 Day Free Trial</p>
               </div>
               <p className="text-[1.4rem] font-semibold flex flex-col">
-                <span>$59</span>
-                <span className="text-sm font-medium">per month</span>
+                {selectedPlan === "monthly" && loading ? (
+                  <span className="text-sm animate-pulse">Processing...</span>
+                ) : (
+                  <>
+                    <span>$59</span>
+                    <span className="text-sm font-medium">per month</span>
+                  </>
+                )}
               </p>
             </div>
 
-            <div onClick={() => handleSelectedPlan("year")} className="flex justify-between items-center rounded-2xl py-2 px-2 bg-[linear-gradient(to_right,#DBC572,#FFECA3,#C1A950)] hover:shadow-md transition cursor-pointer">
+            {/* Yearly Plan */}
+            <div
+              onClick={() => handleplan("yearly")}
+              className={`flex justify-between items-center rounded-2xl py-2 px-2 bg-[linear-gradient(to_right,#DBC572,#FFECA3,#C1A950)] hover:shadow-md transition cursor-pointer ${selectedPlan === "yearly" && loading
+                ? "opacity-70 pointer-events-none"
+                : ""
+                }`}
+            >
               <div>
                 <h3 className="text-lg font-semibold text-white">1 Year</h3>
                 <p className="text-xs text-white mb-1">Save 20%</p>
               </div>
               <p className="text-[1.4rem] font-semibold text-white flex flex-col">
-                <span>$599</span>
-                <span className="text-sm font-medium">per year</span>
+                {selectedPlan === "yearly" && loading ? (
+                  <span className="text-sm animate-pulse">Processing...</span>
+                ) : (
+                  <>
+                    <span>$599</span>
+                    <span className="text-sm font-medium">per year</span>
+                  </>
+                )}
               </p>
             </div>
 
-            <p className="text-xs text-gray-400 mt-4">* Terms and Condition Applied</p>
+            <p className="text-xs text-gray-400 mt-4">
+              * Terms and Condition Applied
+            </p>
           </div>
         )}
       </div>

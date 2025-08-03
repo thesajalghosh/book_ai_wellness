@@ -2,84 +2,97 @@ import React from 'react';
 import { useForm } from 'react-hook-form';
 import { joiResolver } from '@hookform/resolvers/joi';
 import Joi from 'joi';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
-// Joi schema for login
+// Validation schema using Joi
 const schema = Joi.object({
   email: Joi.string().email({ tlds: { allow: false } }).required().messages({
     'string.empty': 'Email is required',
-    'string.email': 'Email must be valid'
+    'string.email': 'Enter a valid email',
   }),
   password: Joi.string().min(6).required().messages({
     'string.empty': 'Password is required',
-    'string.min': 'Password must be at least 6 characters'
-  })
+    'string.min': 'Password must be at least 6 characters',
+  }),
 });
 
-const Login = ({ setIsLoggedIn }) => {
+const Login = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const from = location.state?.from?.pathname || '/';
 
   const {
     register,
     handleSubmit,
-    formState: { errors }
-  } = useForm({
-    resolver: joiResolver(schema)
-  });
+    formState: { errors },
+  } = useForm({ resolver: joiResolver(schema) });
 
-  const onSubmit = async(data) => {
-    // Dummy auth logic
-    // localStorage.setItem('authToken', 'sample-token');
-    // setIsLoggedIn(true);
-    // navigate('/book-page');
-    console.log(data)
-    const payload = data
+  const onSubmit = async (data) => {
     try {
-      const response_data = await  axios.post(`${process.env.REACT_APP_BACKEND_API}/avatar_book/user/login`, payload)
-      console.log("response_data", response_data)
-      if(response_data?.data.success){
-        localStorage.setItem("access-token",response_data?.data?.token)
+      const response = await axios.post(
+        `${process.env.REACT_APP_BACKEND_API}/avatar_book/user/login`,
+        data
+      );
+
+      if (response?.data?.success) {
+        localStorage.setItem('access-token', response.data.token);
+        navigate(from, { replace: true });
       }
-      
-    } catch (error) {
-      console.log("call", error)
-      
+    } catch (err) {
+      console.error('Login error:', err);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
-      <div className="w-full max-w-sm bg-white p-6 rounded-xl shadow-md">
-        <h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+    <div className="min-h-screen flex items-center justify-center bg-neutral-100 px-4">
+      <div className="w-full max-w-md bg-white p-8 rounded-2xl shadow-lg">
+        <h2 className="text-3xl font-semibold text-center text-black mb-6">Login</h2>
+
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <div>
+            <label className="block mb-2 text-sm text-gray-700">Email</label>
             <input
               type="email"
-              placeholder="Email"
+              placeholder="Enter your email"
               {...register('email')}
-              className="border border-gray-300 rounded-lg p-3 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-5 py-3 text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black"
             />
-            {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>}
+            {errors.email && (
+              <p className="text-xs text-red-500 mt-1">{errors.email.message}</p>
+            )}
           </div>
 
           <div>
+            <label className="block mb-2 text-sm text-gray-700">Password</label>
             <input
               type="password"
-              placeholder="Password"
+              placeholder="Enter your password"
               {...register('password')}
-              className="border border-gray-300 rounded-lg p-3 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-5 py-3 text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black"
             />
-            {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>}
+            {errors.password && (
+              <p className="text-xs text-red-500 mt-1">{errors.password.message}</p>
+            )}
           </div>
 
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition"
+            className="w-full py-3 text-base rounded-md bg-black text-white hover:bg-gray-900 transition"
           >
-            Login
+            Sign In
           </button>
         </form>
+
+        <p className="text-sm text-center text-gray-600 mt-6">
+          Don’t have an account?{' '}
+          <span
+            onClick={() => navigate('/register')}
+            className="text-black underline cursor-pointer"
+          >
+            Register here
+          </span>
+        </p>
       </div>
     </div>
   );

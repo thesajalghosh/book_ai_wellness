@@ -359,7 +359,7 @@ const Avater = ({ call_from }) => {
         const timeout = setTimeout(async () => {
             await endSession();
             // window.location.reload();
-        }, 90000); // 20 seconds
+        }, 18000); // 20 seconds
 
         return () => clearTimeout(timeout); // clean up on unmount or restart
     }, [sessionStarted]);
@@ -411,7 +411,7 @@ const Avater = ({ call_from }) => {
 
             {
                 isLoadingSession && (
-                    <div className="absolute top-0 left-0 w-full h-[75vh] bg-black z-50 flex items-center justify-center rounded-[20px]">
+                    <div className="absolute top-0 left-0 w-full h-[96vh] bg-[#F6F6F6] z-50 flex items-center justify-center rounded-[20px]">
                         <div className="w-8 h-8 border-4 border-emerald-600 border-t-transparent rounded-full animate-spin"></div>
                         <span className="text-sm text-emerald-600 ml-2">Loading...</span>
                     </div>
@@ -419,7 +419,7 @@ const Avater = ({ call_from }) => {
             }
 
             <div className="flex flex-col justify-between gap-2">
-                <div className="rounded-[20px] bg-black">
+                <div className="rounded-[20px] bg-black h-[80vh]]">
                     <video
                         ref={mediaStream}
                         autoPlay
@@ -427,7 +427,7 @@ const Avater = ({ call_from }) => {
                         style={{
 
                             width: "100%",
-                            height: "100%",
+                            height: "78vh",
                             objectFit: "contain",
                             borderRadius: "20px",
                             // marginTop: "2rem"
