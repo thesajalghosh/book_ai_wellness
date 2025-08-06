@@ -47,7 +47,7 @@ const MobileDesignBookPage = () => {
 
 
     ////-------------------- Avatar work start ------------------------///
- const [accessToken, setAccessToken] = useState('')
+    const [accessToken, setAccessToken] = useState('')
     const [initialModal, setInitialModal] = useState(true)
     const [accessTokenLoading, setAccessTokenLoading] = useState(false)
     const avatar = useRef(null);
@@ -136,6 +136,7 @@ const MobileDesignBookPage = () => {
         setIsLoadingSession(true);
         setInitialModal(false)
         setSessionStarted(true);
+        setMessageSectionshow(true)
 
         avatar.current = new StreamingAvatar({
             token: accessToken,
@@ -337,7 +338,7 @@ const MobileDesignBookPage = () => {
                 {/* Book Image */}
                 <div
                     className={`transition-all duration-500 ease-in-out cursor-pointer
-                         ${showDoctorBig ? "w-25 h-28 absolute top-4 right-4" : "w-full h-full mt-[20vh]"
+                         ${showDoctorBig ? "w-25 h-28 absolute top-4 right-4 z-20" : "w-full h-full mt-[20vh]"
                         }`}
                     onClick={() => setShowDoctorBig(false)}
                 >
@@ -368,23 +369,40 @@ const MobileDesignBookPage = () => {
                 {/* Doctor Image */}
                 <div
                     className={`transition-all duration-500 ease-in-out cursor-pointer
-                         ${showDoctorBig ? "w-full h-full mt-[10vh]" : "w-40 h-32 absolute top-4 right-4"
+                         ${showDoctorBig ? "w-full h-full mt-[10vh]" : "w-40 h-32 absolute top-4 right-4 z-20"
                         }`}
                     onClick={() => setShowDoctorBig(true)}
                 >
-                    <img
+                 {initialModal &&   <img
                         src={PersonImage}
                         alt="Doctor"
                         className="rounded-xl object-cover w-full h-full shadow-md"
-                    />
+                    />}
                     {
                         isLoadingSession && (
-                            <div className="absolute top-0 left-0 w-full h-[96vh] bg-[#F6F6F6] z-50 flex items-center justify-center rounded-[20px]">
+                            <div className="absolute top-0 left-0 z-10 w-full h-full bg-[#F6F6F6] z-50 flex items-center justify-center rounded-[20px]">
                                 <div className="w-8 h-8 border-4 border-emerald-600 border-t-transparent rounded-full animate-spin"></div>
                                 <span className="text-sm text-emerald-600 ml-2">Loading...</span>
                             </div>
                         )
                     }
+                    <div className={`rounded-[20px] bg-black ${!showDoctorBig ? "h-[15vh]" : "h-[55vh] mt-[10vh]"}`}>
+                        <video
+                            ref={mediaStream}
+                            autoPlay
+                            playsInline
+                            style={{
+
+                                width: `${!showDoctorBig ? "20vw" : "100%"}`,
+                                height: `${!showDoctorBig ? "15vh" : "55vh"}`,
+                                objectFit: "contain",
+                                borderRadius: "20px",
+                                // marginTop: "2rem"
+                            }}
+                        >
+                            <track kind="captions" />
+                        </video>
+                    </div>
                 </div>
 
                 {/* Chat Footer */}
