@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { joiResolver } from '@hookform/resolvers/joi';
 import Joi from 'joi';
@@ -21,6 +21,7 @@ const Login = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const from = location.state?.from?.pathname || '/';
+  const [loading , setLoading] = useState(false)
 
   const {
     register,
@@ -29,6 +30,7 @@ const Login = () => {
   } = useForm({ resolver: joiResolver(schema) });
 
   const onSubmit = async (data) => {
+    setLoading(true)
     try {
       const response = await axios.post(
         `${process.env.REACT_APP_BACKEND_API}/avatar_book/user/login`,
@@ -41,6 +43,8 @@ const Login = () => {
       }
     } catch (err) {
       console.error('Login error:', err);
+    }finally{
+      setLoading(false)
     }
   };
 
@@ -80,7 +84,13 @@ const Login = () => {
             type="submit"
             className="w-full py-3 text-base rounded-md bg-black text-white hover:bg-gray-900 transition"
           >
-            Sign In
+            {loading ? (
+              <div className="flex items-center justify-center">
+                <div className="h-5 w-5 border-2 border-t-2 border-gray-200 border-t-black rounded-full animate-spin"></div>
+              </div>
+            ) : (
+              'Sign In'
+            )}
           </button>
         </form>
 

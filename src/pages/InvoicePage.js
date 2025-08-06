@@ -9,7 +9,8 @@ import {
 } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 
-const stripePromise = loadStripe("pk_test_51Ri84701p7FxgOtpBxpv64EfYhi58lK55vqRosvx1iHDbMu5S5zzrp1RSfcEiBmyQ28ka4xd5CyNDklMD8Xhx6bm00tAidJKA6");
+const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_FRONTEND_KEY);
+console.log("stripePromise----->", stripePromise)
 
 const formatDate = (date) => {
   return date.toISOString().split('T')[0];
@@ -76,20 +77,20 @@ const InvoicePage = () => {
       name: 'Monthly Plan',
       startDate: formatDate(today),
       endDate: formatDate(new Date(today.getFullYear(), today.getMonth() + 1, today.getDate())),
-      price: 100,
+      price: 59,
     },
     yearly: {
       name: 'Yearly Plan',
       startDate: formatDate(today),
       endDate: formatDate(new Date(today.getFullYear() + 1, today.getMonth(), today.getDate())),
-      price: 1000,
+      price: 599,
     },
   };
 
   const sub = plans[selectedPlan];
   const taxRate = 0.18;
   const tax = sub.price * taxRate;
-  const total = sub.price + tax;
+  const total = sub.price ;
 
   const getDataLoad = async () => {
     setLoading(true);
@@ -185,8 +186,8 @@ const InvoicePage = () => {
               <span className="font-medium">{sub.endDate}</span>
             </div>
             <div className="flex justify-between px-4 py-3">
-              <span className="text-gray-500">Price</span>
-              <span className="font-semibold">₹{sub.price}</span>
+              <span className="text-gray-500 font-bold">Price</span>
+              <span className="font-semibold text-[17px]">${sub.price}</span>
             </div>
           </div>
         </div>
@@ -197,15 +198,15 @@ const InvoicePage = () => {
           <div className="space-y-3 text-sm">
             <div className="flex justify-between">
               <span>Subtotal</span>
-              <span>₹{sub.price.toFixed(2)}</span>
+              <span>${sub.price.toFixed(2)}</span>
             </div>
-            <div className="flex justify-between">
+            {/* <div className="flex justify-between">
               <span>Tax (18%)</span>
               <span>₹{tax.toFixed(2)}</span>
-            </div>
+            </div> */}
             <div className="flex justify-between font-semibold border-t pt-3">
               <span>Total</span>
-              <span>₹{total.toFixed(2)}</span>
+              <span>${total.toFixed(2)}</span>
             </div>
           </div>
 
