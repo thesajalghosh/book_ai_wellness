@@ -4,6 +4,7 @@ import Avater from "../component/avater";
 import Star from "../Images/star.svg";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import MobileDesignBookPage from "./MobileDesignBookPage";
 
 const BookPage = () => {
   const navigate = useNavigate();
@@ -25,20 +26,26 @@ const BookPage = () => {
   // }, []);
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setTimeLeft((prev) => {
-        const updated = prev > 0 ? prev - 1 : 0;
-        if (updated === 0) {
-          const notLoggedIn = !token;
-          const notSubscribed = !userDetails?.is_subscription;
-          if (notLoggedIn || notSubscribed) {
+    if (!token) {
+      setTimeLeft(20);
+    } else {
+      getUserDetails();
+    }
+  }, [token]);
+
+  useEffect(() => {
+    if (!token || !userDetails?.is_subscription) {
+      const timer = setInterval(() => {
+        setTimeLeft((prev) => {
+          const updated = prev > 0 ? prev - 1 : 0;
+          if (updated === 0) {
             setIsModalOpen(true);
           }
-        }
-        return updated;
-      });
-    }, 1000);
-    return () => clearInterval(timer);
+          return updated;
+        });
+      }, 1000);
+      return () => clearInterval(timer);
+    }
   }, [token, userDetails]);
 
   const formatTime = (seconds) => {
@@ -99,8 +106,8 @@ const BookPage = () => {
   }, [token]);
 
   return (
-    <div className="min-h-screen bg-white flex flex-col items-center p-6 font-roboto relative">
-      {(!token || !userDetails?.is_subscription) && (
+    <div className="min-h-screen bg-white flex flex-col items-center md:p-6  font-roboto relative">
+      {/* {(!token || !userDetails?.is_subscription) && (
         <div className="absolute top-[70px] right-0 bg-[#F1FAEE] border border-[#38A169] text-[#22543D] px-5 py-3 rounded-l-2xl shadow-md flex items-center gap-3 z-50">
           <svg
             className="w-5 h-5 text-[#38A169]"
@@ -119,11 +126,11 @@ const BookPage = () => {
             Free trial ends in <span className="font-semibold">{formatTime(timeLeft)}</span>
           </span>
         </div>
-      )}
+      )} */}
 
 
 
-      <div className="w-[90%] relative">
+      <div className="w-[90%] relative hidden md:block">
         {isModalOpen && (
           <div className="absolute inset-0 bg-black bg-opacity-0 z-10 rounded-[40px]"></div>
         )}
@@ -139,6 +146,7 @@ const BookPage = () => {
           <div className="bg-[linear-gradient(to_right,_#F6F6F6_60%,_#B8BBC2_100%)] rounded-[40px] flex flex-col justify-center items-center md:flex-row gap-[25px] w-full h-[96vh] px-[30px]">
             <div className="relative flex flex-col items-center justify-center md:basis-[40%] w-full h-[100%]">
               <Avater timeLeft={timeLeft} />
+              
             </div>
             <div className="md:basis-[60%] w-full h-full">
               <div className="w-full mx-auto p-4">
@@ -161,7 +169,7 @@ const BookPage = () => {
                   ))}
                 </div>
               </div>
-              <BookShow call_from={"notLogin"} />
+              <BookShow/>
             </div>
           </div>
         </div>
@@ -234,6 +242,9 @@ const BookPage = () => {
             </p>
           </div>
         )}
+      </div>
+      <div className="md:hidden">
+        <MobileDesignBookPage/>
       </div>
     </div>
   );

@@ -15,7 +15,8 @@ const Page = React.forwardRef(({ children }, ref) => {
     );
 });
 
-const BookShow = ({ call_from }) => {
+
+const BookShow = () => {
     const book = useRef();
     const audioRef = useRef(null); // Ref for flip sound
 

@@ -53,8 +53,8 @@ const Avater = ({ call_from }) => {
     const handleAccessToken = async () => {
         setAccessTokenLoading(true)
         try {
-            const { data } = await axios.get("https://api.aiwellness.ai/api/v1/get_access_token/ABY2VmODFhZmVjYWRkNGMwZDliOWEyMWVmMDE4YWVmM2MtMTc0Mzg3MTA0NQ==")
-            // const { data } = await axios.get("https://api.aiwellness.ai/api/v1/get_access_token/ABOWQ4YzkxOTNhNmFmNGU1Yzk3MWJjMGI4NDE4MDQ5ZDUtMTc0NzA0NTEwNg==")
+            // const { data } = await axios.get("https://api.aiwellness.ai/api/v1/get_access_token/ABY2VmODFhZmVjYWRkNGMwZDliOWEyMWVmMDE4YWVmM2MtMTc0Mzg3MTA0NQ==")
+            const { data } = await axios.get("https://api.aiwellness.ai/api/v1/get_access_token/ABOWQ4YzkxOTNhNmFmNGU1Yzk3MWJjMGI4NDE4MDQ5ZDUtMTc0NzA0NTEwNg==")
             if (data?.success) {
                 setAccessToken(data?.data?.token)
             }
