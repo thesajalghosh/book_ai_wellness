@@ -16,12 +16,27 @@ const Page = React.forwardRef(({ children }, ref) => {
 });
 
 
-const BookShow = () => {
+const BookShow = ({onFlipTimerStart}) => {
     const book = useRef();
     const audioRef = useRef(null); // Ref for flip sound
-
+    const chapterPageMap = {
+        "Chapter 1": 0,
+        "Chapter 2": 5,
+        "Chapter 3": 10,
+        "Chapter 4": 15,
+        "Chapter 5": 20,
+        "Chapter 6": 25,
+        "Chapter 7": 30,
+        "Chapter 8": 35,
+        "Chapter 9": 40,
+        "Chapter 10": 45,
+    };
     const [page, setPage] = useState(0);
     const [isSubscribe, setISSubscribe] = useState(false);
+
+
+    const chapters = Array.from({ length: 10 }, (_, i) => `Chapter ${i + 1}`);
+    const [selected, setSelected] = useState("Chapter 1");
 
     const playSound = () => {
         if (audioRef.current) {
@@ -43,6 +58,15 @@ const BookShow = () => {
     };
 
     const handleFlip = () => {
+        onFlipTimerStart()
+        playSound();
+    };
+    const handleChapterClick = (chapter) => {
+        setSelected(chapter);
+        const pageNo = chapterPageMap[chapter] || 0;
+        if (book.current) {
+            book.current.pageFlip().turnToPage(pageNo);
+        }
         playSound();
     };
 
@@ -50,6 +74,26 @@ const BookShow = () => {
         <>
             {/* Audio Tag */}
             <audio ref={audioRef} src="https://res.cloudinary.com/dgkckcwxs/video/upload/v1754245905/pagesound_ewxha1.mp3" preload="auto" />
+            <div className="w-full mx-auto p-4">
+                <p className="mb-2 text-gray-700 font-medium">
+                    Click any chapter to explain about the chapter
+                </p>
+
+                <div className="flex flex-wrap gap-2">
+                    {chapters.map((chapter) => (
+                        <button
+                            key={chapter}
+                            onClick={() => handleChapterClick(chapter)}
+                            className={`px-3 py-[2px] rounded-full font-medium border transition-all ${selected === chapter
+                                ? "bg-emerald-700 text-white border-emerald-700"
+                                : "text-emerald-700 border-emerald-700 hover:bg-emerald-50"
+                                }`}
+                        >
+                            {chapter}
+                        </button>
+                    ))}
+                </div>
+            </div>
 
             <div className="relative w-full h-[75vh] flex justify-center bg-white rounded-xl border border-[#E2E2E2] overflow-hidden">
 
