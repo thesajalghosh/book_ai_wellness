@@ -7,6 +7,7 @@ import { ALL_PDF_IMAGES } from '../Constant.others';
 import { IoMicOutline } from "react-icons/io5";
 import { ReactComponent as Send } from "../Images/send.svg";
 import { ReactComponent as Mic } from "../Images/mic.svg";
+import Star from "../Images/star.svg";
 import axios from 'axios';
 import { HiOutlineChatAlt2 } from 'react-icons/hi';
 import StreamingAvatar, {
@@ -16,6 +17,7 @@ import StreamingAvatar, {
     TaskType,
     VoiceEmotion,
 } from "@heygen/streaming-avatar";
+import { useNavigate } from 'react-router-dom';
 
 const Page = React.forwardRef(({ children }, ref) => {
     return (
@@ -30,6 +32,11 @@ const Page = React.forwardRef(({ children }, ref) => {
 const MobileDesignBookPage = () => {
     const [showDoctorBig, setShowDoctorBig] = useState(true);
     const [messageSectionShow, setMessageSectionshow] = useState(false)
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedPlan, setSelectedPlan] = useState("");
+    const [loading, setLoading] = useState(false);
+    const [userDetails, setUserDetails] = useState({});
+    const navigate = useNavigate()
     const audioRef = useRef()
     const book = useRef();
 
@@ -43,6 +50,29 @@ const MobileDesignBookPage = () => {
     };
     const handleFlip = () => {
         playSound();
+    };
+
+    const handleplan = async (plan_type) => {
+        setSelectedPlan(plan_type);
+        setLoading(true);
+        const amount = plan_type === "monthly" ? 59 : 599;
+        const payload = {
+            plan: plan_type,
+            amount: amount,
+        };
+        try {
+            const { data: response_data } = await axios.post(
+                `${process.env.REACT_APP_BACKEND_API}/avatar_book/user/transaction`,
+                payload
+            );
+            if (response_data.success) {
+                navigate(`/invoice-page/${response_data?.data?._id}`);
+            }
+        } catch (error) {
+            console.log("error", error);
+        } finally {
+            setLoading(false);
+        }
     };
 
 
@@ -332,121 +362,191 @@ const MobileDesignBookPage = () => {
     };
     ////-------------------- Avatar work end ------------------------///
     return (
-        <div className="bg-gray-100 flex justify-center bg-white w-[100vw] h-[100vh] p-4">
-            <div className="bg-gradient-to-r from-[#F6F6F6] to-[#B8BBC2] w-[96vw] h-[85vh]  rounded-[30px] shadow-lg relative flex flex-col items-center overflow-hidden">
-                <audio ref={audioRef} src="https://res.cloudinary.com/dgkckcwxs/video/upload/v1754245905/pagesound_ewxha1.mp3" preload="auto" />
-                {/* Book Image */}
-                <div
-                    className={`transition-all duration-500 ease-in-out cursor-pointer
+        <>
+            <div className="bg-gray-100 flex justify-center bg-white w-[100vw] h-[100vh] p-4">
+                <div className="bg-gradient-to-r from-[#F6F6F6] to-[#B8BBC2] w-[96vw] h-[85vh]  rounded-[30px] shadow-lg relative flex flex-col items-center overflow-hidden">
+                    <audio ref={audioRef} src="https://res.cloudinary.com/dgkckcwxs/video/upload/v1754245905/pagesound_ewxha1.mp3" preload="auto" />
+                    {/* Book Image */}
+                    <div
+                        className={`transition-all duration-500 ease-in-out cursor-pointer
                          ${showDoctorBig ? "w-25 h-28 absolute top-4 right-4 z-20" : "w-full h-full mt-[20vh]"
-                        }`}
-                    onClick={() => setShowDoctorBig(false)}
-                >
-                    {showDoctorBig && <img src={Mainbook} className='h-[114px] w-[151px]' alt='main image' />}
-                    {!showDoctorBig && <HTMLFlipBook
-                        width={400}
-                        height={650}
-                        onFlip={handleFlip}
-                        size="stretch"
-                        maxShadowOpacity={0.5}
-                        showCover={true}
-                        mobileScrollSupport={true}
-                        ref={book}
-                        className="flip-book mt-[20px]"
+                            }`}
+                        onClick={() => setShowDoctorBig(false)}
                     >
-                        {Object.entries(ALL_PDF_IMAGES)?.map(([key, value]) => (
-                            <Page key={key}>
-                                <img
-                                    src={value.url}
-                                    alt={`Page ${key}`}
-                                    className="h-full w-full object-contain"
-                                />
-                            </Page>
-                        ))}
-                    </HTMLFlipBook>}
-                </div>
-
-                {/* Doctor Image */}
-                <div
-                    className={`transition-all duration-500 ease-in-out cursor-pointer
-                         ${showDoctorBig ? "w-full h-full mt-[10vh]" : "w-40 h-32 absolute top-4 right-4 z-20"
-                        }`}
-                    onClick={() => setShowDoctorBig(true)}
-                >
-                    {initialModal && <img
-                        src={PersonImage}
-                        alt="Doctor"
-                        className="rounded-xl object-cover w-full h-full shadow-md"
-                    />}
-                    {
-                        isLoadingSession && (
-                            <div className="absolute top-0 left-0 z-10 w-full h-full bg-[#F6F6F6] z-50 flex items-center justify-center rounded-[20px]">
-                                <div className="w-8 h-8 border-4 border-emerald-600 border-t-transparent rounded-full animate-spin"></div>
-                                <span className="text-sm text-emerald-600 ml-2">Loading...</span>
-                            </div>
-                        )
-                    }
-                    <div className={`rounded-[20px] bg-black ${!showDoctorBig ? `${initialModal ? "h-[0vh]" : "h-[15vh]"}` : "h-[55vh] mt-[10vh]"}`}>
-                        <video
-                            ref={mediaStream}
-                            autoPlay
-                            playsInline
-                            style={{
-
-                                width: `${!showDoctorBig ? "20vw" : "100%"}`,
-                                height: `${!showDoctorBig ? "15vh" : "55vh"}`,
-                                objectFit: "contain",
-                                borderRadius: "20px",
-                                // marginTop: "2rem"
-                            }}
+                        {showDoctorBig && <img src={Mainbook} className='h-[114px] w-[151px]' alt='main image' />}
+                        {!showDoctorBig && <HTMLFlipBook
+                            width={400}
+                            height={650}
+                            onFlip={handleFlip}
+                            size="stretch"
+                            maxShadowOpacity={0.5}
+                            showCover={true}
+                            mobileScrollSupport={true}
+                            ref={book}
+                            className="flip-book mt-[20px]"
                         >
-                            <track kind="captions" />
-                        </video>
+                            {Object.entries(ALL_PDF_IMAGES)?.map(([key, value]) => (
+                                <Page key={key}>
+                                    <img
+                                        src={value.url}
+                                        alt={`Page ${key}`}
+                                        className="h-full w-full object-contain"
+                                    />
+                                </Page>
+                            ))}
+                        </HTMLFlipBook>}
                     </div>
-                </div>
 
-                {/* Chat Footer */}
-                {!messageSectionShow ?
-                    <>
-                        <button className="bg-emerald-600 absolute bottom-[50px] left-[120px] bg-[#047857] hover:bg-[#047857] text-white font-semibold py-2 px-6
-                             rounded-full transition-colors flex gap-2"
-                            onClick={async () => {
-                                await startSession();
-                                handlePlayVideo();
-                                setInitialModal(false)
-
-                            }}
-
-                            disabled={accessTokenLoading}>
-
-                            {accessTokenLoading &&
-                                <div className="absolute inset-0 flex items-center justify-center bg-[#047857]/70 rounded-full">
-
-
-                                    <svg aria-hidden="true" role="status" className="inline w-6 h-6 me-3 text-white animate-spin" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path strokeWidth="2" d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="#E5E7EB" />
-                                        <path strokeWidth="2" d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentColor" />
-                                    </svg>
+                    {/* Doctor Image */}
+                    <div
+                        className={`transition-all duration-500 ease-in-out cursor-pointer
+                         ${showDoctorBig ? "w-full h-full mt-[10vh]" : "w-40 h-32 absolute top-4 right-4 z-20"
+                            }`}
+                        onClick={() => setShowDoctorBig(true)}
+                    >
+                        {initialModal && <img
+                            src={PersonImage}
+                            alt="Doctor"
+                            className="rounded-xl object-cover w-full h-full shadow-md"
+                        />}
+                        {
+                            isLoadingSession && (
+                                <div className="absolute top-0 left-0 z-10 w-full h-full bg-[#F6F6F6] z-50 flex items-center justify-center rounded-[20px]">
+                                    <div className="w-8 h-8 border-4 border-emerald-600 border-t-transparent rounded-full animate-spin"></div>
+                                    <span className="text-sm text-emerald-600 ml-2">Loading...</span>
                                 </div>
+                            )
+                        }
+                        <div className={`rounded-[20px] bg-black ${!showDoctorBig ? `${initialModal ? "h-[0vh]" : "h-[15vh]"}` : "h-[55vh] mt-[10vh]"}`}>
+                            <video
+                                ref={mediaStream}
+                                autoPlay
+                                playsInline
+                                style={{
 
-                            }
-                            <HiOutlineChatAlt2 size={25} /> Chat now
-                        </button>
+                                    width: `${!showDoctorBig ? "20vw" : "100%"}`,
+                                    height: `${!showDoctorBig ? "15vh" : "55vh"}`,
+                                    objectFit: "contain",
+                                    borderRadius: "20px",
+                                    // marginTop: "2rem"
+                                }}
+                            >
+                                <track kind="captions" />
+                            </video>
+                        </div>
+                    </div>
+
+                    {/* Chat Footer */}
+                    {!messageSectionShow ?
+                        <>
+                            <button className="bg-emerald-600 absolute bottom-[50px] left-[120px] bg-[#047857] hover:bg-[#047857] text-white font-semibold py-2 px-6
+                             rounded-full transition-colors flex gap-2"
+                                onClick={async () => {
+                                    await startSession();
+                                    handlePlayVideo();
+                                    setInitialModal(false)
+
+                                }}
+
+                                disabled={accessTokenLoading}>
+
+                                {accessTokenLoading &&
+                                    <div className="absolute inset-0 flex items-center justify-center bg-[#047857]/70 rounded-full">
 
 
-                    </>
-                    :
-                    <div className="mt-6 w-full flex items-center justify-center gap-4 px-4 py-2 rounded-full mb-3">
-                        <button className="text-green-600">
-                            <Mic />
-                        </button>
-                        <input placeholder='Ask me Anything?' className='p-2 rounded-[20px]' />
-                        <button className="text-red-500">
-                            <Send />
-                        </button>
-                    </div>}
+                                        <svg aria-hidden="true" role="status" className="inline w-6 h-6 me-3 text-white animate-spin" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path strokeWidth="2" d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="#E5E7EB" />
+                                            <path strokeWidth="2" d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentColor" />
+                                        </svg>
+                                    </div>
+
+                                }
+                                <HiOutlineChatAlt2 size={25} /> Chat now
+                            </button>
+
+
+                        </>
+                        :
+                        <div className="mt-6 w-full flex items-center justify-center gap-4 px-4 py-2 rounded-full mb-3">
+                            <button className="text-green-600">
+                                <Mic />
+                            </button>
+                            <input placeholder='Ask me Anything?' className='p-2 rounded-[20px]' />
+                            <button className="text-red-500">
+                                <Send />
+                            </button>
+                        </div>}
+                </div>
             </div>
-        </div>
+            {isModalOpen && (
+                <div className="absolute top-1/2 left-1/2 z-20 transform -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-[400px] bg-white rounded-3xl shadow-2xl p-6 text-center">
+                    <div className="w-full">
+                        <div className="flex justify-between items-center">
+                            <h2 className="text-[1.5rem] font-bold mb-1">Get Membership</h2>
+                            <div className="flex justify-center mb-2">
+                                <img src={Star} alt="star" className="w-[60px] h-[60px]" />
+                            </div>
+                        </div>
+                        <p className="text-gray-500 text-[0.8rem] mb-4 text-left">
+                            Subscribe to Premium to get access to Dr Nathan Bryan <br /> AI
+                            Interactive Magazine
+                        </p>
+                    </div>
+
+                    {/* Monthly Plan */}
+                    <div
+                        onClick={() => handleplan("monthly")}
+                        className={`flex justify-between items-center border rounded-2xl py-2 px-2 bg-[#EEEEEE] mb-3 hover:shadow-md transition cursor-pointer ${selectedPlan === "monthly" && loading
+                            ? "opacity-70 pointer-events-none"
+                            : ""
+                            }`}
+                    >
+                        <div>
+                            <h3 className="text-lg font-semibold">1 Month</h3>
+                            <p className="text-xs text-gray-500 mb-1">3 Day Free Trial</p>
+                        </div>
+                        <p className="text-[1.4rem] font-semibold flex flex-col">
+                            {selectedPlan === "monthly" && loading ? (
+                                <span className="text-sm animate-pulse">Processing...</span>
+                            ) : (
+                                <>
+                                    <span>$59</span>
+                                    <span className="text-sm font-medium">per month</span>
+                                </>
+                            )}
+                        </p>
+                    </div>
+
+                    {/* Yearly Plan */}
+                    <div
+                        onClick={() => handleplan("yearly")}
+                        className={`flex justify-between items-center rounded-2xl py-2 px-2 bg-[linear-gradient(to_right,#DBC572,#FFECA3,#C1A950)] hover:shadow-md transition cursor-pointer ${selectedPlan === "yearly" && loading
+                            ? "opacity-70 pointer-events-none"
+                            : ""
+                            }`}
+                    >
+                        <div>
+                            <h3 className="text-lg font-semibold text-white">1 Year</h3>
+                            <p className="text-xs text-white mb-1">Save 20%</p>
+                        </div>
+                        <p className="text-[1.4rem] font-semibold text-white flex flex-col">
+                            {selectedPlan === "yearly" && loading ? (
+                                <span className="text-sm animate-pulse">Processing...</span>
+                            ) : (
+                                <>
+                                    <span>$599</span>
+                                    <span className="text-sm font-medium">per year</span>
+                                </>
+                            )}
+                        </p>
+                    </div>
+
+                    <p className="text-xs text-gray-400 mt-4">
+                        * Terms and Condition Applied
+                    </p>
+                </div>
+            )}
+        </>
     );
 };
 

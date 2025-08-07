@@ -14,9 +14,8 @@ const BookPage = () => {
   const token = localStorage.getItem("access-token");
   const [loading, setLoading] = useState(false);
   const [userDetails, setUserDetails] = useState({});
+  const [timerStarted, setTimerStarted] = useState(false);
 
-  const chapters = Array.from({ length: 10 }, (_, i) => `Chapter ${i + 1}`);
-  const [selected, setSelected] = useState("Chapter 1");
 
   // Open modal immediately for non-logged-in users
   // useEffect(() => {
@@ -34,19 +33,20 @@ const BookPage = () => {
   }, [token]);
 
   useEffect(() => {
-    if (!token || !userDetails?.is_subscription) {
-      const timer = setInterval(() => {
-        setTimeLeft((prev) => {
-          const updated = prev > 0 ? prev - 1 : 0;
-          if (updated === 0) {
-            setIsModalOpen(true);
-          }
-          return updated;
-        });
-      }, 1000);
-      return () => clearInterval(timer);
-    }
-  }, [token, userDetails]);
+    if (!timerStarted || token || userDetails?.is_subscription) return;
+
+    const timer = setInterval(() => {
+      setTimeLeft((prev) => {
+        const updated = prev > 0 ? prev - 1 : 0;
+        if (updated === 0) {
+          setIsModalOpen(true);
+        }
+        return updated;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [timerStarted, token, userDetails]);
 
   const formatTime = (seconds) => {
     const mins = String(Math.floor(seconds / 60)).padStart(2, "0");
@@ -107,10 +107,10 @@ const BookPage = () => {
 
   return (
     <div className="min-h-screen bg-white flex flex-col items-center md:p-6  font-roboto relative">
-      {(!token || !userDetails?.is_subscription) && (
-        <div className="absolute top-[70px] left-0 bg-[#F1FAEE] border border-[#38A169] text-[#22543D] px-2 md:px-5 py-3 rounded-r-2xl shadow-md flex items-center gap-3 z-50">
+      {(!token || !userDetails?.is_subscription) && timerStarted && (
+        <div className="animate-slideIn absolute top-[70px] right-0 bg-[#FED7D7] border border-[#E53E3E] text-[#742A2A] px-2 md:px-5 py-3 rounded-l-2xl shadow-md flex items-center gap-3 z-50">
           <svg
-            className="w-5 h-5 text-[#38A169]"
+            className="w-5 h-5 text-[#E53E3E]"
             fill="none"
             stroke="currentColor"
             strokeWidth={2}
@@ -130,6 +130,7 @@ const BookPage = () => {
 
 
 
+
       <div className="w-[90%] relative hidden md:block">
         {isModalOpen && (
           <div className="absolute inset-0 bg-black bg-opacity-0 z-10 rounded-[40px]"></div>
@@ -145,31 +146,12 @@ const BookPage = () => {
         >
           <div className="bg-[linear-gradient(to_right,_#F6F6F6_60%,_#B8BBC2_100%)] rounded-[40px] flex flex-col justify-center items-center md:flex-row gap-[25px] w-full h-[96vh] px-[30px]">
             <div className="relative flex flex-col items-center justify-center md:basis-[40%] w-full h-[100%]">
-              <Avater timeLeft={timeLeft} />
-              
+              <Avater timeLeft={timeLeft} onFlipTimerStart={() => setTimerStarted(true)}/>
+
             </div>
             <div className="md:basis-[60%] w-full h-full">
-              <div className="w-full mx-auto p-4">
-                <p className="mb-2 text-gray-700 font-medium">
-                  Click any chapter to explain about the chapter
-                </p>
 
-                <div className="flex flex-wrap gap-2">
-                  {chapters.map((chapter) => (
-                    <button
-                      key={chapter}
-                      onClick={() => setSelected(chapter)}
-                      className={`px-3 py-[2px] rounded-full font-medium border transition-all ${selected === chapter
-                        ? "bg-emerald-700 text-white border-emerald-700"
-                        : "text-emerald-700 border-emerald-700 hover:bg-emerald-50"
-                        }`}
-                    >
-                      {chapter}
-                    </button>
-                  ))}
-                </div>
-              </div>
-              <BookShow/>
+              <BookShow onFlipTimerStart={() => setTimerStarted(true)} />
             </div>
           </div>
         </div>
@@ -244,7 +226,7 @@ const BookPage = () => {
         )}
       </div>
       <div className="md:hidden">
-        <MobileDesignBookPage/>
+        <MobileDesignBookPage />
       </div>
     </div>
   );
