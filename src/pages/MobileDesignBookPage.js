@@ -227,6 +227,7 @@ const MobileDesignBookPage = () => {
                 knowledgeId: knowledgeId,
                 // knowledgeId: "536de02daba64403afcf882530957e67",
                 voice: {
+                    name: "Nathan",
                     rate: 1.5,
                     emotion: VoiceEmotion.EXCITED,
                 },
@@ -373,7 +374,7 @@ const MobileDesignBookPage = () => {
                         }`}
                     onClick={() => setShowDoctorBig(true)}
                 >
-                 {initialModal &&   <img
+                    {initialModal && <img
                         src={PersonImage}
                         alt="Doctor"
                         className="rounded-xl object-cover w-full h-full shadow-md"
