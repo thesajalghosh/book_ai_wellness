@@ -223,13 +223,12 @@ const MobileDesignBookPage = () => {
             const res = await avatar.current.createStartAvatar({
                 quality: AvatarQuality.Low,
                 avatarName: "b6e3f03bb4534c3bbd454b169050a351",
-                // avatarName: "Marianne_CasualLook_public",
+                avatarName: "Marianne_CasualLook_public",
                 knowledgeId: knowledgeId,
                 // knowledgeId: "536de02daba64403afcf882530957e67",
                 voice: {
-                    name: "Nathan",
                     rate: 1.5,
-                    emotion: VoiceEmotion.EXCITED,
+                    emotion: VoiceEmotion.FRIENDLY,
                 },
                 language: language,
                 disableIdleTimeout: true,

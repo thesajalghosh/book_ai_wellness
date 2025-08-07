@@ -8,7 +8,7 @@ import MobileDesignBookPage from "./MobileDesignBookPage";
 
 const BookPage = () => {
   const navigate = useNavigate();
-  const [timeLeft, setTimeLeft] = useState(20);
+  const [timeLeft, setTimeLeft] = useState(40);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState("");
   const token = localStorage.getItem("access-token");
@@ -27,7 +27,7 @@ const BookPage = () => {
 
   useEffect(() => {
     if (!token) {
-      setTimeLeft(20);
+      setTimeLeft(40);
     } else {
       getUserDetails();
     }
@@ -107,8 +107,8 @@ const BookPage = () => {
 
   return (
     <div className="min-h-screen bg-white flex flex-col items-center md:p-6  font-roboto relative">
-      {/* {(!token || !userDetails?.is_subscription) && (
-        <div className="absolute top-[70px] right-0 bg-[#F1FAEE] border border-[#38A169] text-[#22543D] px-5 py-3 rounded-l-2xl shadow-md flex items-center gap-3 z-50">
+      {(!token || !userDetails?.is_subscription) && (
+        <div className="absolute top-[70px] left-0 bg-[#F1FAEE] border border-[#38A169] text-[#22543D] px-2 md:px-5 py-3 rounded-r-2xl shadow-md flex items-center gap-3 z-50">
           <svg
             className="w-5 h-5 text-[#38A169]"
             fill="none"
@@ -126,7 +126,7 @@ const BookPage = () => {
             Free trial ends in <span className="font-semibold">{formatTime(timeLeft)}</span>
           </span>
         </div>
-      )} */}
+      )}
 
 
 
