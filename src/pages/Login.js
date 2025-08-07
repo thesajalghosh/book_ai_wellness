@@ -36,11 +36,22 @@ const Login = () => {
         `${process.env.REACT_APP_BACKEND_API}/avatar_book/user/login`,
         data
       );
+      console.log("response>>>>>>>", response)
 
-      if (response?.data?.success) {
-        localStorage.setItem('access-token', response.data.token);
-        navigate(from, { replace: true });
+      if(response?.data?.success && response?.data?.user?.is_subscription){
+        console.log("call..")
+        navigate('/book-page');
+      }else{
+         console.log("call..2222")
+         console.log("from---", from)
+         localStorage.setItem('access-token', response.data.token);
+         navigate(from, { replace: true });
       }
+
+      // if (response?.data?.success) {
+      //    localStorage.setItem('access-token', response.data.token);
+      //    navigate(from, { replace: true });
+      // }
     } catch (err) {
       console.error('Login error:', err);
     }finally{

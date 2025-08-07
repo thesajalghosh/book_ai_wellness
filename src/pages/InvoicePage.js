@@ -9,8 +9,7 @@ import {
 } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 
-const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_FRONTEND_KEY);
-console.log("stripePromise----->", stripePromise)
+const stripePromise =await loadStripe(process.env.REACT_APP_STRIPE_FRONTEND_KEY);
 
 const formatDate = (date) => {
   return date.toISOString().split('T')[0];
