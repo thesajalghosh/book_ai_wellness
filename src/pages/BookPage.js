@@ -8,7 +8,7 @@ import MobileDesignBookPage from "./MobileDesignBookPage";
 
 const BookPage = () => {
   const navigate = useNavigate();
-  const [timeLeft, setTimeLeft] = useState(40);
+  const [timeLeft, setTimeLeft] = useState(90);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState("");
   const token = localStorage.getItem("access-token");
@@ -23,10 +23,14 @@ const BookPage = () => {
   //     setIsModalOpen(true);
   //   }
   // }, []);
-
   useEffect(() => {
-    if (!token) {
-      setTimeLeft(40);
+    const trialEnded = localStorage.getItem("end_free_trial") === "true";
+    if (trialEnded) {
+      setIsModalOpen(true);
+      setTimerStarted(false); // Prevent timer from running again
+      setTimeLeft(0);
+    } else if (!token) {
+      setTimeLeft(90);
     } else {
       getUserDetails();
     }
@@ -40,6 +44,7 @@ const BookPage = () => {
         const updated = prev > 0 ? prev - 1 : 0;
         if (updated === 0) {
           setIsModalOpen(true);
+          localStorage.setItem("end_free_trial", "true"); // <-- Set flag here
         }
         return updated;
       });
@@ -146,7 +151,7 @@ const BookPage = () => {
         >
           <div className="bg-[linear-gradient(to_right,_#F6F6F6_60%,_#B8BBC2_100%)] rounded-[40px] flex flex-col justify-center items-center md:flex-row gap-[25px] w-full h-[96vh] px-[30px]">
             <div className="relative flex flex-col items-center justify-center md:basis-[40%] w-full h-[100%]">
-              <Avater timeLeft={timeLeft} onFlipTimerStart={() => setTimerStarted(true)}/>
+              <Avater timeLeft={timeLeft} onFlipTimerStart={() => setTimerStarted(true)} />
 
             </div>
             <div className="md:basis-[60%] w-full h-full">

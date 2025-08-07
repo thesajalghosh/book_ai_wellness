@@ -12,7 +12,7 @@ import StreamingAvatar, {
 } from "@heygen/streaming-avatar";
 import { HiOutlineChatAlt2 } from "react-icons/hi";
 
-const Avater = ({ call_from }) => {
+const Avater = ({ onFlipTimerStart }) => {
     const [accessToken, setAccessToken] = useState('')
     const [initialModal, setInitialModal] = useState(true)
     const [accessTokenLoading, setAccessTokenLoading] = useState(false)
@@ -390,6 +390,7 @@ const Avater = ({ call_from }) => {
                                 await startSession();
                                 handlePlayVideo();
                                 setInitialModal(false)
+                                onFlipTimerStart()
 
                             }}
                             disabled={accessTokenLoading}
