@@ -62,7 +62,7 @@ const MobileDesignBookPage = () => {
         };
         try {
             const { data: response_data } = await axios.post(
-                `${process.env.REACT_APP_BACKEND_API}/avatar_book/user/transaction`,
+                `${process.env.REACT_APP_BACKEND_API}/api/v1/avatar_book/user/transaction`,
                 payload
             );
             if (response_data.success) {

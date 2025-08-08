@@ -15,7 +15,7 @@ const PaymentSuccess = () => {
       if (!intentId) return;
 
       try {
-        await axios.patch(`${process.env.REACT_APP_BACKEND_API}/avatar_book/user/subscription`, {
+        await axios.patch(`${process.env.REACT_APP_BACKEND_API}/api/v1/avatar_book/user/subscription`, {
           token,
         });
       } catch (error) {

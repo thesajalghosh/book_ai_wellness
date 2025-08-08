@@ -33,7 +33,7 @@ const Register = () => {
   const onSubmit = async (data) => {
     try {
       const response = await axios.post(
-        `${process.env.REACT_APP_BACKEND_API}/avatar_book/user/register`,
+        `${process.env.REACT_APP_BACKEND_API}/api/v1/avatar_book/user/register`,
         data
       );
 
