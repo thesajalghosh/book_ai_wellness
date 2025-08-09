@@ -5,6 +5,7 @@ import Star from "../Images/star.svg";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import MobileDesignBookPage from "./MobileDesignBookPage";
+import Loading from "../component/Loading";
 
 const BookPage = () => {
   const navigate = useNavigate();
@@ -15,26 +16,20 @@ const BookPage = () => {
   const [loading, setLoading] = useState(false);
   const [userDetails, setUserDetails] = useState({});
   const [timerStarted, setTimerStarted] = useState(false);
+  const [wholePageLoading, setWholePageLoading] = useState(false)
 
 
-  // Open modal immediately for non-logged-in users
-  // useEffect(() => {
-  //   if (!token) {
-  //     setIsModalOpen(true);
-  //   }
-  // }, []);
   useEffect(() => {
     const trialEnded = localStorage.getItem("end_free_trial") === "true";
-    if (trialEnded) {
+    console.log("vuserDetails", userDetails)
+    if (trialEnded && !userDetails?.is_subscription) {
       setIsModalOpen(true);
       setTimerStarted(false); // Prevent timer from running again
       setTimeLeft(0);
     } else if (!token) {
       setTimeLeft(90);
-    } else {
-      getUserDetails();
     }
-  }, [token]);
+  }, [token, userDetails]);
 
   useEffect(() => {
     if (!timerStarted || token || userDetails?.is_subscription) return;
@@ -69,7 +64,7 @@ const BookPage = () => {
     };
     try {
       const { data: response_data } = await axios.post(
-        `${process.env.REACT_APP_BACKEND_API}/avatar_book/user/transaction`,
+        `${process.env.REACT_APP_BACKEND_API}/api/v1/avatar_book/user/transaction`,
         payload
       );
       if (response_data.success) {
@@ -83,24 +78,27 @@ const BookPage = () => {
   };
 
   const getUserDetails = async () => {
-    setLoading(true);
+    setWholePageLoading(true);
     try {
       const { data: response_data } = await axios.get(
-        `${process.env.REACT_APP_BACKEND_API}/avatar_book/user/${token}`
+        `${process.env.REACT_APP_BACKEND_API}/api/v1/avatar_book/user/${token}`
       );
 
       // console.log("response_data", response_data);
       if (response_data.success) {
         setUserDetails(response_data.data);
+        console.log("calllllllllllllllll111111111111")
 
         if (!response_data.data.is_subscription) {
           setIsModalOpen(true);
+        } else if (response_data?.data?.is_subscription) {
+          setIsModalOpen(false)
         }
       }
     } catch (error) {
       console.log("error", error);
     } finally {
-      setLoading(false);
+      setWholePageLoading(false);
     }
   };
 
@@ -111,6 +109,12 @@ const BookPage = () => {
   }, [token]);
 
   return (
+    <>
+    <div>
+      {wholePageLoading && <Loading/>}
+    </div>
+    
+    
     <div className="min-h-screen bg-white flex flex-col items-center md:p-6  font-roboto relative">
       {(!token || !userDetails?.is_subscription) && timerStarted && (
         <div className="animate-slideIn absolute top-[70px] right-0 bg-[#FED7D7] border border-[#E53E3E] text-[#742A2A] px-2 md:px-5 py-3 rounded-l-2xl shadow-md flex items-center gap-3 z-50">
@@ -234,6 +238,8 @@ const BookPage = () => {
         <MobileDesignBookPage />
       </div>
     </div>
+    </>
+    
   );
 };
 

@@ -24,7 +24,7 @@ const ProfilePage = () => {
     setLoading(true);
     try {
       const { data: response_data } = await axios.get(
-        `${process.env.REACT_APP_BACKEND_API}/avatar_book/user/${token}`
+        `${process.env.REACT_APP_BACKEND_API}/api/v1/avatar_book/user/${token}`
       );
 
       if (response_data.success) {

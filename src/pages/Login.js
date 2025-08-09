@@ -33,7 +33,7 @@ const Login = () => {
     setLoading(true)
     try {
       const response = await axios.post(
-        `${process.env.REACT_APP_BACKEND_API}/avatar_book/user/login`,
+        `${process.env.REACT_APP_BACKEND_API}/api/v1/avatar_book/user/login`,
         data
       );
       console.log("response>>>>>>>", response)
@@ -41,6 +41,7 @@ const Login = () => {
       if(response?.data?.success && response?.data?.user?.is_subscription){
         console.log("call..")
         navigate('/book-page');
+        localStorage.setItem('access-token', response.data.token);
       }else{
          console.log("call..2222")
          console.log("from---", from)

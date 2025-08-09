@@ -95,7 +95,7 @@ const InvoicePage = () => {
     setLoading(true);
     try {
       const { data } = await axios.get(
-        `${process.env.REACT_APP_BACKEND_API}/avatar_book/user/transaction/${id}`
+        `${process.env.REACT_APP_BACKEND_API}/api/v1/avatar_book/user/transaction/${id}`
       );
       if (data?.success) {
         setSelectedPlan(data?.data?.plan);
@@ -111,7 +111,7 @@ const InvoicePage = () => {
   const createPaymentIntent = async () => {
     setPayNowLoading(true);
     try {
-      const { data } = await axios.post(`${process.env.REACT_APP_BACKEND_API}/avatar_book/create-payment-intent`, {
+      const { data } = await axios.post(`${process.env.REACT_APP_BACKEND_API}/api/v1/avatar_book/create-payment-intent`, {
         amount: amount * 100, // Convert to smallest currency unit
         currency: 'usd',
         plan: selectedPlan,
