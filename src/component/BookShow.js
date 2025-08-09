@@ -2,7 +2,7 @@
 import React, { useRef, useState } from 'react';
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import HTMLFlipBook from 'react-pageflip';
-import { ALL_PDF_IMAGES } from '../Constant.others';
+import { NATHAN_BRAYAN_BOOK } from '../Constant.others';
 
 // Page Component
 const Page = React.forwardRef(({ children }, ref) => {
@@ -120,7 +120,7 @@ const BookShow = ({onFlipTimerStart}) => {
                     ref={book}
                     className="flip-book mt-[20px]"
                 >
-                    {Object.entries(ALL_PDF_IMAGES)?.map(([key, value]) => (
+                    {Object.entries(NATHAN_BRAYAN_BOOK)?.map(([key, value]) => (
                         <Page key={key}>
                             <img
                                 src={value.url}
